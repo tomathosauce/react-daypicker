@@ -119,16 +119,28 @@ export default class DayPicker extends Component {
 
   onDayClick = day => () => {
     if (day) {
-      this.props.onDayClick(day);
+      this.setState({selected: day})
     }
   };
 
   renderDay = (day, index) => {
-    const { date, month, today, year } = this.state;
+    const { date, month, today, year, selected } = this.state;
     const { active } = this.props;
 
     const isToday = day && day.valueOf() === today.valueOf();
     const isActive = active && day && DayPicker.isSameDay(active, day);
+
+    const {markedDays} = this.props
+    const isSelected = selected && day && selected.valueOf() === day.valueOf()
+
+    const markedDaysValue = markedDays.map(x=>x.valueOf())
+      
+    var isMarked = (function(){
+      if(day){
+        return markedDaysValue.indexOf(day.valueOf()) > -1 ? true : false
+      }
+      return false
+    })()
 
     return (
       <td
@@ -136,7 +148,9 @@ export default class DayPicker extends Component {
           "day",
           isActive ? "active" : null,
           !day ? "empty" : null,
-          isToday ? "today" : null
+          isToday ? "today" : null,
+          isMarked ? "marked" : null,
+          isSelected ? "selected" : null
         ]
           .filter(v => v)
           .join(" ")}
